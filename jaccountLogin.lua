@@ -1,7 +1,6 @@
 local cjson = require "cjson"
 local http = require "resty.http"
 local uuid = require("uuid")
-local https = require("ssl.https")
 local ltn12 = require("ltn12")
 local json = require("dkjson")  -- Ensure you have a JSON library like dkjson
 local mysql = require "resty.mysql"
@@ -111,31 +110,89 @@ end
 
 -- Function to send request and get id
 local function getUserId(account, name, email)
-    -- Construct the query parameters
-    local query = string.format("account=%s&name=%s&email=%s", account, name, email)
-    local url = "https://123.60.187.205:8082/internal/users?" .. query
+    -- Encode the query parameters
+    local encoded_account = ngx.escape_uri(account)
+    local encoded_name = ngx.escape_uri(name)
+    local encoded_email = ngx.escape_uri(email)
 
-    -- Table to store the response
-    local response_body = {}
+    -- Construct the query parameters
+    local query = string.format("account=%s&name=%s&email=%s", encoded_account, encoded_name, encoded_email)
+    local url = "http://123.60.187.205:8082/internal/users?" .. query
+
+    -- Create a new HTTP client instance
+    local httpc = http.new()
+
+    -- Log the URL
+    ngx.log(ngx.INFO, "URL: ", url)
 
     -- Send the HTTPS request
-    local res, code, response_headers, status = http.request{
-        url = url,
-        method = "GET",
-        sink = ltn12.sink.table(response_body)
-    }
+    local res, err = httpc:request_uri(url, {
+        method = "POST",
+        headers = {
+            ["Content-Type"] = "application/x-www-form-urlencoded",
+        }
+    })
 
     -- Check if the request was successful
-    if code == 200 then
-        -- Concatenate the response body table into a single string
-        local response_str = table.concat(response_body)
+    if not res then
+        -- Handle error (you can customize this part)
+        error("HTTP request failed: " .. tostring(err))
+    end
+
+    if res.status == 200 then
         -- Parse the JSON response
-        local response_json = json.decode(response_str)
+        local response_json = require("cjson").decode(res.body)
         -- Return the id from the response
-        return response_json.id
+        ngx.log(ngx.INFO, "User ID: ", response_json)
+        return response_json
     else
         -- Handle error (you can customize this part)
-        error("HTTP request failed with status: " .. tostring(status))
+        error("HTTP request failed with status: " .. tostring(res.status))
+    end
+end
+
+-- Function to send request and post user info in other service
+local function postUser(id, name, base_url)
+    -- Encode the query parameters
+    local encoded_id = ngx.escape_uri(id)
+    local encoded_name = ngx.escape_uri(name)
+
+    -- Construct the query parameters
+    -- local query = string.format("account=%s&name=%s&email=%s", encoded_account, encoded_name, encoded_email)
+    local query = string.format("id=%s&name=%s", encoded_id, encoded_name)
+    local url = base_url .. "?" .. query
+    -- local bot_service_url = "http://123.60.187.205:8083/internal/users?" .. query
+    -- local chat_service_url = "http://123.60.187.205:8084/internal/users?" .. query
+    -- local plugin_service_url = "http://123.60.187.205:8085/internal/users?" .. query
+
+    -- Create a new HTTP client instance
+    local httpc = http.new()
+
+    -- Log the URL
+    ngx.log(ngx.INFO, "URL: ", url)
+
+    -- Send the HTTPS request
+    local res, err = httpc:request_uri(url, {
+        method = "POST",
+        headers = {
+            ["Content-Type"] = "application/x-www-form-urlencoded",
+        }
+    })
+
+    -- Check if the request was successful
+    if not res then
+        -- Handle error (you can customize this part)
+        error("HTTP request failed: " .. tostring(err))
+    end
+
+    if res.status == 200 then
+        -- Parse the JSON response
+        local response_json = require("cjson").decode(res.body)
+        -- Return the id from the response
+        return response_json
+    else
+        -- Handle error (you can customize this part)
+        error("HTTP request failed with status: " .. tostring(res.status))
     end
 end
 
@@ -160,8 +217,8 @@ local function update_or_insert_user(user_id, token)
 
     local ok, err, errcode, sqlstate = db:connect{
         host = "123.60.187.205",
-        port = 3306,
-        database = "unigpt",
+        port = 3310,
+        database = "unigpt_auth",
         user = "nginx",
         password = "Kiwi339bleavescreeper",
         max_packet_size = 1024 * 1024,
@@ -226,6 +283,10 @@ local function main()
         ngx.say(cjson.encode({ success = false, message = "Failed to get user ID" }))
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
+
+    postUser(user_id, user.name, "http://123.60.187.205:8083/internal/users")
+    postUser(user_id, user.name, "http://123.60.187.205:8084/internal/users")
+    postUser(user_id, user.name, "http://123.60.187.205:8085/internal/users")
 
     local token = generate_auth_token(user)
 

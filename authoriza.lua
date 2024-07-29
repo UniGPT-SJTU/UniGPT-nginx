@@ -24,8 +24,8 @@ db:set_timeout(1000)  -- 设置超时时间为 1 秒
 
 local ok, err, errcode, sqlstate = db:connect{
     host = "123.60.187.205",
-    port = 3306,
-    database = "unigpt",
+    port = 3310,
+    database = "unigpt_auth",
     user = "nginx",
     password = "Kiwi339bleavescreeper",
     max_packet_size = 1024 * 1024,
