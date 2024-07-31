@@ -48,19 +48,19 @@ local function request_access_token(code)
     })
 
     -- for debug 
-    return "01349df7878294d514eb2b035b34ef00"
+    -- return "01349df7878294d514eb2b035b34ef00"
 
-    -- if not res then
-    --     ngx.log(ngx.ERR, "Failed to request access token: ", err)
-    --     return nil, "Failed to request access token"
-    -- end
+    if not res then
+        ngx.log(ngx.ERR, "Failed to request access token: ", err)
+        return nil, "Failed to request access token"
+    end
 
-    -- local response_body = cjson.decode(res.body)
-    -- if not response_body.access_token then
-    --     return nil, "Failed to get access token"
-    -- end
+    local response_body = cjson.decode(res.body)
+    if not response_body.access_token then
+        return nil, "Failed to get access token"
+    end
 
-    -- return response_body.access_token
+    return response_body.access_token
 end
 
 local function get_user_profile(access_token)
@@ -284,9 +284,9 @@ local function main()
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
 
-    postUser(user_id, user.name, "http://123.60.187.205:8083/internal/users")
-    postUser(user_id, user.name, "http://123.60.187.205:8084/internal/users")
-    postUser(user_id, user.name, "http://123.60.187.205:8085/internal/users")
+    -- postUser(user_id, user.name, "http://123.60.187.205:8083/internal/users")
+    -- postUser(user_id, user.name, "http://123.60.187.205:8084/internal/users")
+    -- postUser(user_id, user.name, "http://123.60.187.205:8085/internal/users")
 
     local token = generate_auth_token(user)
 

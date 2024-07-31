@@ -29,6 +29,8 @@ COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
 # copy the authorize lua script
 COPY authoriza.lua /usr/local/openresty/nginx/conf/lua/authorize.lua
 COPY jaccountLogin.lua /usr/local/openresty/nginx/conf/lua/jaccountLogin.lua
+COPY logout.lua /usr/local/openresty/nginx/conf/lua/logout.lua
+COPY getUserId.lua /usr/local/openresty/nginx/conf/lua/getUserId.lua
 # copy the init script
 COPY init.sh /init.sh
 COPY .my.cnf /.my.cnf
