@@ -29,7 +29,6 @@ local function request_access_token(code)
     ngx.log(ngx.INFO, "CLIENT_SECRET: ", client_secret)
     ngx.log(ngx.INFO, "REDIRECT_URI: ", redirect_uri)
 
-    
     -- the 202.120.2.109 is jaccount.sjtu.edu.cn but since the DNS is unstable so I choose to use the IP address
     local res, err = httpc:request_uri("http://202.120.2.109/oauth2/token", {
         method = "POST",

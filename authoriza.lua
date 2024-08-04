@@ -3,6 +3,12 @@ local cjson = require "cjson"
 
 -- 从 cookie 中获取 token
 local cookie = ngx.var.http_cookie
+
+if not cookie then
+    ngx.log(ngx.ERR, "No cookies found in the request")
+    return ngx.exit(401)
+end
+
 local token_pattern = "token=([^;]+)"
 local token = cookie:match(token_pattern)  -- 使用模式匹配从 cookie 中解析 token
 
