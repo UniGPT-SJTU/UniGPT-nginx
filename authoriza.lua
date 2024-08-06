@@ -61,6 +61,9 @@ local is_admin = res[1].is_admin
 ngx.req.set_header("X-User-Id", user_id)
 ngx.req.set_header("X-Is-Admin", is_admin)
 
+-- log user_id and is_admin
+ngx.log(ngx.INFO, "User ID: ", user_id)
+
 -- 关闭 MySQL 连接
 local ok, err = db:set_keepalive(10000, 100)
 if not ok then
