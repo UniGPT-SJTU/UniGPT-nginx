@@ -1,0 +1,15 @@
+services:
+  nginx:
+    build: .
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./authoriza.lua:/usr/local/openresty/nginx/conf/lua/authorize.lua
+      - ./init.sh:/init.sh
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "/bin/sh init.sh && tail -f /dev/null"
+      ]
