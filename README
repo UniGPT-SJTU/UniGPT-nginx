@@ -1,0 +1,9 @@
+## 修改前端url:
+nginx.conf frontendUrl
+
+## 修改后端ip:
+nginx.conf backendIp
+
+## 数据库连接（需要使用auth_table.sql初始化auth_db）
+db_config.lua
+.my.cnf
