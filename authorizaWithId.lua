@@ -1,5 +1,6 @@
 local mysql = require "resty.mysql"
 local cjson = require "cjson"
+local db_config = require "db_config"
 
 -- 从 cookie 中获取 token
 local cookie = ngx.var.http_cookie

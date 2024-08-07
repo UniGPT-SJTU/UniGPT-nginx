@@ -4,6 +4,7 @@ local uuid = require("uuid")
 local ltn12 = require("ltn12")
 local json = require("dkjson")  -- Ensure you have a JSON library like dkjson
 local mysql = require "resty.mysql"
+local db_config = require "db_config"
 
 local function request_access_token(code)
     local httpc = http.new()
