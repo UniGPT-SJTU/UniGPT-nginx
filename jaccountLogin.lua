@@ -12,7 +12,7 @@ local function request_access_token(code)
     -- 从环境变量中获取client_id, client_secret和redirect_uri
     local client_id = "ov3SLrO4HyZSELxcHiqS"
     local client_secret = "B9919DDA3BD9FBF7ADB9F84F67920D8CB6528620B9586D1C"
-    local redirect_uri = "http://123.60.187.205:3000/login"
+    local redirect_uri = ngx.var.frontend_url .. "/login"
 
     -- 检查REDIRECT_URI是否被正确设置
     if not redirect_uri then
@@ -117,7 +117,7 @@ local function getUserId(account, name, email)
 
     -- Construct the query parameters
     local query = string.format("account=%s&name=%s&email=%s", encoded_account, encoded_name, encoded_email)
-    local url = "http://123.60.187.205:8082/internal/users?" .. query
+    local url = "http://" .. ngx.var.backend_ip .. ":8082/internal/users?" .. query
 
     -- Create a new HTTP client instance
     local httpc = http.new()
