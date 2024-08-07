@@ -1,5 +1,5 @@
 local db_config = {
-    host = "172.17.0.1",
+    host = "123.60.187.205",
     port = 3310,
     database = "unigpt_auth",
     user = "nginx",
