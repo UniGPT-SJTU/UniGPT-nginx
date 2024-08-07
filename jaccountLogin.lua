@@ -264,14 +264,14 @@ local function main()
     local access_token, err = request_access_token(code)
     if not access_token then
         ngx.status = ngx.HTTP_UNAUTHORIZED
-        ngx.say(cjson.encode({ success = false, message = err }))
+        ngx.say(cjson.encode({ ok = false, message = err }))
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
 
     local user, err = get_user_profile(access_token)
     if not user then
         ngx.status = ngx.HTTP_UNAUTHORIZED
-        ngx.say(cjson.encode({ success = false, message = err }))
+        ngx.say(cjson.encode({ ok = false, message = err }))
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
 
@@ -279,7 +279,7 @@ local function main()
 
     if not user_id then
         ngx.status = ngx.HTTP_UNAUTHORIZED
-        ngx.say(cjson.encode({ success = false, message = "Failed to get user ID" }))
+        ngx.say(cjson.encode({ ok = false, message = "Failed to get user ID" }))
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
 
@@ -294,7 +294,7 @@ local function main()
     ngx.header["Set-Cookie"] = "token=" .. token .. "; Path=/; Max-Age=" .. tostring(24 * 60 * 60)
 
     ngx.status = ngx.HTTP_OK
-    ngx.say(cjson.encode({ success = true, token = token }))
+    ngx.say(cjson.encode({ ok = true, token = token }))
 end
 
 main()
