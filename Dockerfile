@@ -33,7 +33,7 @@ COPY logout.lua /usr/local/openresty/nginx/conf/lua/logout.lua
 COPY getUserId.lua /usr/local/openresty/nginx/conf/lua/getUserId.lua
 COPY authorizaWithId.lua /usr/local/openresty/nginx/conf/lua/authorizaWithId.lua
 COPY authorizaOnlyAdmin.lua /usr/local/openresty/nginx/conf/lua/authorizaOnlyAdmin.lua
-COPY db_config.lua /usr/local/openresty/nginx/conf/lua/db_config.lua
+COPY db_config.lua /usr/local/openresty/lualib/db_config.lua
 # copy the init script
 COPY init.sh /init.sh
 COPY .my.cnf /.my.cnf
