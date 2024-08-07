@@ -51,10 +51,27 @@ end
 local user_id = res[1].user_id
 local is_admin = res[1].is_admin
 
-local url_user_id = ngx.var[1]
+local request_user_id = ngx.var[1]
+
+if is_admin == nil then
+    is_admin = "0"
+end
+
+-- log is_admin and user_id and request_user_id
+ngx.log(ngx.INFO, "is_admin: ", is_admin)
+ngx.log(ngx.INFO, "user_id: ", user_id)
+ngx.log(ngx.INFO, "request_user_id: ", request_user_id)
+
+if is_admin == "1" then
+    ngx.log(ngx.INFO, "Admin user ID: ", user_id)
+end
+
+if tonumber(user_id) == tonumber(request_user_id) then
+    ngx.log(ngx.INFO, "User ID: ", user_id)
+end
 
 -- 判断是否允许访问
-if is_admin == "1" or user_id == request_user_id then
+if is_admin == "1" or tonumber(user_id) == tonumber(request_user_id)then
     ngx.log(ngx.INFO, "Access granted for user ID: ", user_id)
     -- 将 user_id 添加到请求头部
     ngx.req.set_header("X-User-Id", user_id)
