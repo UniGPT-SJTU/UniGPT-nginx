@@ -13,3 +13,18 @@ services:
         "-c",
         "/bin/sh init.sh && tail -f /dev/null"
       ]
+  auth_db:
+    image: mysql:8.0
+    ports:
+      - "3310:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: nginx
+      MYSQL_PASSWORD: Kiwi339bleavescreeper
+      MYSQL_DATABASE: unigpt_auth
+    volumes:
+      - auth_db_data:/var/lib/mysql
+      - ./auth_table.sql:/docker-entrypoint-initdb.d/auth_table.sql
+
+volumes:
+  auth_db_data:

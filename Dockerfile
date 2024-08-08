@@ -26,6 +26,7 @@ RUN luarocks install dkjson
 RUN update-ca-certificates
 
 COPY nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY cors.conf /usr/local/openresty/nginx/conf/cors.conf
 # copy the authorize lua script
 COPY authoriza.lua /usr/local/openresty/nginx/conf/lua/authorize.lua
 COPY jaccountLogin.lua /usr/local/openresty/nginx/conf/lua/jaccountLogin.lua
