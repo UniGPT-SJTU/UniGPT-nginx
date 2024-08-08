@@ -12,5 +12,5 @@ set_cookie("token", "", expires)
 -- 返回响应
 ngx.status = ngx.HTTP_OK
 ngx.header["Content-Type"] = "application/json"
-ngx.say('{"success":true, "message":""}')
+ngx.say('{"ok":true, "message":""}')
 ngx.exit(ngx.HTTP_OK)
