@@ -36,8 +36,8 @@ if not ok then
     return ngx.exit(500)
 end
 
--- 查询 token 对应的 user_id
-local res, err, errcode, sqlstate = db:query("SELECT user_id FROM auth WHERE token = " .. ngx.quote_sql_str(token))
+-- 查询 token 对应的 user_id和is_admin
+local res, err, errcode, sqlstate = db:query("SELECT user_id, is_admin FROM auth WHERE token = " .. ngx.quote_sql_str(token))
 if not res then
     ngx.log(ngx.ERR, "Bad result: ", err, ": ", errcode, ": ", sqlstate, ".")
     return ngx.exit(500)
@@ -51,10 +51,24 @@ end
 local user_id = res[1].user_id
 local is_admin = res[1].is_admin
 
+-- 打印res
+ngx.log(ngx.INFO, "res: ", cjson.encode(res))
+-- 打印res[1]
+ngx.log(ngx.INFO, "res[1]: ", cjson.encode(res[1]))
+
+-- 打印is_admin和user_id和request_user_id
+ngx.log(ngx.INFO, "is_admin: ", is_admin)
+ngx.log(ngx.INFO, "user_id: ", user_id)
+
 local url_user_id = ngx.var[1]
 
+-- 如果is_admin为null，则默认为0
+if is_admin == nil then
+    is_admin = 0
+end
+
 -- 判断是否允许访问
-if is_admin == "1" then
+if tonumber(is_admin) == 1 then
     ngx.log(ngx.INFO, "Access granted for user ID: ", user_id)
     -- 将 user_id 添加到请求头部
     ngx.req.set_header("X-User-Id", user_id)

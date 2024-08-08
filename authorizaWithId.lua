@@ -36,8 +36,8 @@ if not ok then
     return ngx.exit(500)
 end
 
--- 查询 token 对应的 user_id
-local res, err, errcode, sqlstate = db:query("SELECT user_id FROM auth WHERE token = " .. ngx.quote_sql_str(token))
+-- 查询 token 对应的 user_id和is_admin
+local res, err, errcode, sqlstate = db:query("SELECT user_id, is_admin FROM auth WHERE token = " .. ngx.quote_sql_str(token))
 if not res then
     ngx.log(ngx.ERR, "Bad result: ", err, ": ", errcode, ": ", sqlstate, ".")
     return ngx.exit(500)
@@ -62,7 +62,7 @@ ngx.log(ngx.INFO, "is_admin: ", is_admin)
 ngx.log(ngx.INFO, "user_id: ", user_id)
 ngx.log(ngx.INFO, "request_user_id: ", request_user_id)
 
-if is_admin == "1" then
+if tonumber(is_admin) == 1  then
     ngx.log(ngx.INFO, "Admin user ID: ", user_id)
 end
 
@@ -71,7 +71,7 @@ if tonumber(user_id) == tonumber(request_user_id) then
 end
 
 -- 判断是否允许访问
-if is_admin == "1" or tonumber(user_id) == tonumber(request_user_id)then
+if tonumber(is_admin) == 1  or tonumber(user_id) == tonumber(request_user_id)then
     ngx.log(ngx.INFO, "Access granted for user ID: ", user_id)
     -- 将 user_id 添加到请求头部
     ngx.req.set_header("X-User-Id", user_id)

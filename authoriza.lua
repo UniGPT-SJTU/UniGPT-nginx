@@ -36,8 +36,8 @@ if not ok then
     return ngx.exit(500)
 end
 
--- 查询 token 对应的 user_id
-local res, err, errcode, sqlstate = db:query("SELECT user_id FROM auth WHERE token = " .. ngx.quote_sql_str(token))
+-- 查询 token 对应的 user_id和is_admin
+local res, err, errcode, sqlstate = db:query("SELECT user_id, is_admin FROM auth WHERE token = " .. ngx.quote_sql_str(token))
 if not res then
     ngx.log(ngx.ERR, "Bad result: ", err, ": ", errcode, ": ", sqlstate, ".")
     return ngx.exit(500)
@@ -48,8 +48,14 @@ if #res == 0 then
     return ngx.exit(401)
 end
 
+
 local user_id = res[1].user_id
 local is_admin = res[1].is_admin
+
+-- 如果is_admin为null，则默认为0
+if is_admin == nil then
+    is_admin = 0
+end
 
 -- 将 user_id 添加到请求头部
 ngx.req.set_header("X-User-Id", user_id)
