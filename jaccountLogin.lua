@@ -200,6 +200,15 @@ local function generate_auth_token(user)
     -- Initialize the UUID library
     uuid.seed()
 
+    -- Set the random bytes generator function
+    uuid.set_rng(function(len)
+        local random_bytes = ""
+        for i = 1, len do
+            random_bytes = random_bytes .. string.char(math.random(0, 255))
+        end
+        return random_bytes
+    end)
+
     -- Generate a UUID
     local auth_token = uuid()
 
